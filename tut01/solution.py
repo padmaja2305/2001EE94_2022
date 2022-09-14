@@ -16,14 +16,14 @@ def octact_identification(mod):
     df = pd.read_csv('octant_input.csv')
     rows = df.shape[0]
 
-    # Calculating Average Value of U, V, W
+    # Calculating Avg Value of U, V, W
     df.insert(4, column="U average", value="")
     df.insert(5, column="V average", value="")
     df.insert(6, column="W average", value="")
 
     df['U average'][0], df['V average'][0], df['W average'][0]= average(df)
         
-    # Calculating Average Values
+    # Calculating Avg Values
     u_average = df['U'].mean()
     v_average = df['V'].mean()
     w_average = df['W'].mean()
@@ -89,7 +89,7 @@ def octact_identification(mod):
     df["4"][0] = l.count(4)
     df["-4"][0] = l.count(-4)
 
-    # Split list into ranges and find the count of octant values
+    # Split list into ranges and finding the count of octant values
     start = 0
     end = len(l)
     step = int(mod)
