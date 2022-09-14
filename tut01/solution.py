@@ -1,26 +1,27 @@
 import pandas as pd
 import numpy as np
-import math
+
 pd.options.mode.chained_assignment = None
+
+    #defining average value
+def average (df):
+    u_average = df['U'].mean()
+    v_average = df['V'].mean()
+    w_average = df['W'].mean()
+    return u_average,v_average,w_average
+
 
 def octact_identification(mod):
     # Reading CSV File
     df = pd.read_csv('octant_input.csv')
     rows = df.shape[0]
 
-    # Calculating Average Values
-    u_average = df['U'].mean()
-    v_average = df['V'].mean()
-    w_average = df['W'].mean()
-
     # Calculating Average Value of U, V, W
     df.insert(4, column="U average", value="")
     df.insert(5, column="V average", value="")
     df.insert(6, column="W average", value="")
 
-    df['U average'][0] = u_average
-    df['V average'][0] = v_average
-    df['W average'][0] = w_average
+    df['U average'][0], df['V average'][0], df['W average'][0]= average(df)
         
     # Calculating Average Values
     u_average = df['U'].mean()
