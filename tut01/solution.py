@@ -14,13 +14,13 @@ def octact_identification(mod):
     w_average = df['W'].mean()
 
     # Calculating Average Value of U, V, W
-    df.insert(4, column="U Avg", value="")
-    df.insert(5, column="V Avg", value="")
-    df.insert(6, column="W Avg", value="")
+    df.insert(4, column="U average", value="")
+    df.insert(5, column="V average", value="")
+    df.insert(6, column="W average", value="")
 
-    df['U Avg'][0] = u_avg
-    df['V Avg'][0] = v_avg
-    df['W Avg'][0] = w_avg
+    df['U average'][0] = u_average
+    df['V average'][0] = v_average
+    df['W average'][0] = w_average
         
     # Calculating Average Values
     u_average = df['U'].mean()
@@ -57,23 +57,23 @@ def octact_identification(mod):
 
 # Calculating the octant values
     for i in range(0, rows):
-      if df["U'=U - U avg"][i] >= 0 and  df["V'=V - V avg"][i] >= 0:
-        if df["W'=W - W avg"][i] >= 0:
+      if df["U'=U - U average"][i] >= 0 and  df["V'=V - V average"][i] >= 0:
+        if df["W'=W - W average"][i] >= 0:
           df['Octant'][i] = 1
         else:
           df['Octant'][i] = -1
-      elif df["U'=U - U avg"][i] < 0 and  df["V'=V - V avg"][i] >= 0:
-        if df["W'=W - W avg"][i] >= 0:
+      elif df["U'=U - U average"][i] < 0 and  df["V'=V - V average"][i] >= 0:
+        if df["W'=W - W average"][i] >= 0:
           df['Octant'][i] = 2
         else:
           df['Octant'][i] = -2
-      elif df["U'=U - U avg"][i] < 0 and  df["V'=V - V avg"][i] < 0:
-        if df["W'=W - W avg"][i] >= 0:
+      elif df["U'=U - U average"][i] < 0 and  df["V'=V - V average"][i] < 0:
+        if df["W'=W - W average"][i] >= 0:
           df['Octant'][i] = 3
         else:
           df['Octant'][i] = -3
-      elif df["U'=U - U avg"][i] >= 0 and  df["V'=V - V avg"][i] < 0:
-        if df["W'=W - W avg"][i] >= 0:
+      elif df["U'=U - U average"][i] >= 0 and  df["V'=V - V average"][i] < 0:
+        if df["W'=W - W average"][i] >= 0:
           df['Octant'][i] = 4
         else:
           df['Octant'][i] = -4
@@ -87,3 +87,33 @@ def octact_identification(mod):
     df["-3"][0] = l.count(-3)
     df["4"][0] = l.count(4)
     df["-4"][0] = l.count(-4)
+
+    # Split list into ranges and find the count of octant values
+    start = 0
+    end = len(l)
+    step = int(mod)
+    idx=2
+    for i in range(start, end, step):
+        x = i
+        sub_list = l[x:x+step]
+        #print(sub_list)
+        y = x+step
+        if x!=0:
+          x+=1
+        df['Octant ID'][idx] = str(x)+"-"+str(y)
+        df['1'][idx] = sub_list.count(1)
+        df['-1'][idx] = sub_list.count(-1)
+        df['2'][idx] = sub_list.count(2)
+        df['-2'][idx] = sub_list.count(-2)
+        df['3'][idx] = sub_list.count(3)
+        df['-3'][idx] = sub_list.count(-3)
+        df['4'][idx] = sub_list.count(4)
+        df['-4'][idx] = sub_list.count(-4)
+        idx+=1
+
+    #print(df)
+    df.to_csv('octant_output.csv', index=False)
+
+
+mod= input("Enter MOD:\n")
+octact_identification(mod)
