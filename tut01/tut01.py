@@ -1,8 +1,6 @@
-def factorial(x):
-    n=1
-    for i in range (2,x+1):
-        n=n*i
-    print (n)
+def octact_identification(mod=5000):
+###Code
 
-x=int(input("Enter the number whose factorial is to be found"))
-factorial(x)
+
+mod=5000
+octact_identification(mod)
