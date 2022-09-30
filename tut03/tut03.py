@@ -77,6 +77,35 @@ def octact_identification(mod):
         print("Error in calculating Octant values.")
         exit()
                
+    try:
+        data = []
+        column_data = df.at['Octant']
+
+        prev = -1
+        for i in [-4,-3,-2,-1,1,2,3,4]:
+            subsequence = 0
+            longest_subsequence = 0
+            count = 0
+            for j in column_data:
+                if j == i:
+                    subsequence += 1
+                else:
+                    subsequence = 0
+                    if subsequence == longest_subsequence:
+                        count += 1
+                    elif subsequence > longest_subsequence:
+                        longest_subsequence = subsequence
+                        count = 1
+                    prev = i
+            data.append([i, longest_subsequence, count])
+
+        for i in data:
+            df.at[i[0], 'Octant ID'] = i[0]
+            df.at[i[0], 'Longest Subsequence Length'] = i[1]
+            df.at[i[0], 'Count'] = i[2]
+    except Exception as e:
+        print(e)
+        exit()
 
 #This shall be the last lines of the code.
 end_time = datetime.now()
