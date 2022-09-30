@@ -40,8 +40,44 @@ def octact_identification(mod):
         print("Error in calculating average.")
         exit()
 
-
         
+    try:
+        #Inserting new column for Octant
+        df.insert(10, column="Octant", value="")
+        df.insert(11, column="", value="")
+
+        df.insert(12, column="Octant ID", value="")
+        df.insert(13, column="Longest Subsequence Length", value="")
+        df.insert(14, column="Count", value="")
+        l=[]
+        # Calculating the octant values
+        for i in range(0, rows):
+            if df.at[i,"U'=U - U avg"] >= 0 and  df.at[i,"V'=V - V avg"] >= 0:
+                if df.at[i,"W'=W - W avg"] >= 0:
+                  df.at[i, 'Octant'] = 1
+                else:
+                  df.at[i, 'Octant'] = -1
+            elif df.at[i,"U'=U - U avg"] < 0 and  df.at[i,"V'=V - V avg"] >= 0:
+                if df.at[i,"W'=W - W avg"] >= 0:
+                  df.at[i, 'Octant'] = 2
+                else:
+                  df.at[i, 'Octant'] = -2
+            elif df.at[i,"U'=U - U avg"] < 0 and  df.at[i,"V'=V - V avg"] < 0:
+                if df.at[i,"W'=W - W avg"] >= 0:
+                  df.at[i, 'Octant'] = 3
+                else:
+                  df.at[i, 'Octant'] = -3
+            elif df.at[i,"U'=U - U avg"] >= 0 and  df.at[i,"V'=V - V avg"] < 0:
+                if df.at[i,"W'=W - W avg"] >= 0:
+                  df.at[i, 'Octant'] = 4
+                else:
+                  df.at[i, 'Octant'] = -4
+            l.append(df.at[i, 'Octant'])
+    except:
+        print("Error in calculating Octant values.")
+        exit()
+               
+
 #This shall be the last lines of the code.
 end_time = datetime.now()
 print('Duration of Program Execution: {}'.format(end_time - start_time))
