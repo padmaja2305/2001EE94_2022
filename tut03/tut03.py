@@ -12,7 +12,7 @@ def reading_excel_file(filename):
     global data_frame
     global rows
     try:
-        data_frame = pd.read_excel("input_octant_transition_identify.xlsx")
+        data_frame = pd.read_excel("input_octant_longest_subsequence.xlsx")
         rows = data_frame.shape[0]
     except Exception as e:
         print(e)
@@ -270,7 +270,7 @@ def writing_excel_file(filename):
 
 def octact_identification(mod):
     global data_frame
-    reading_excel_file("input_octant_transition_identify.xlsx")
+    reading_excel_file("input_octant_longest_subsequence.xlsx")
     average()
     insert_octant_column()
     l = insert_octant_values()
@@ -312,7 +312,7 @@ def octact_identification(mod):
         exit()
 
     
-    writing_excel_file("output_octant_transition_identity.xlsx")
+    writing_excel_file("output_octant_longest_subsequence.xlsx")
 
 
 if __name__ == "__main__":
