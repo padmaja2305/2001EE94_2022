@@ -267,3 +267,28 @@ def writing_excel_file(filename):
     except:
         print("Error in exporting to excel.")
         exit()
+
+
+#FInally identifying the octant
+def octact_identification(mod):
+
+    reading_excel_file("input_octant_transition_identify.xlsx")
+    average()
+    insert_octant_column()
+    l = insert_octant_values()
+    count_ocatant_value(l)
+    transistion_count()
+    mod_transiston(mod)
+    writing_excel_file("output_octant_transition_identify.xlsx")
+
+
+if __name__ == "__main__":
+    ver = python_version()
+
+    if ver == "3.8.10":
+        print("Correct Version Installed")
+    else:
+        print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+
+    mod = 10000
+    octact_identification(mod)
