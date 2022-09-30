@@ -52,4 +52,25 @@ def average():
         print("Error in calculating average.")
         exit()
 
+def insert_octant_column():
+    try:
+        # Insert new column for the Octant
+        data_frame.insert(10, column="Octant", value="")
+        data_frame.insert(11, column="", value="")
 
+        data_frame.insert(12, column="Octant ID", value="")
+        data_frame.insert(13, column="1", value="")
+        data_frame.insert(14, column="-1", value="")
+        data_frame.insert(15, column="2", value="")
+        data_frame.insert(16, column="-2", value="")
+        data_frame.insert(17, column="3", value="")
+        data_frame.insert(18, column="-3", value="")
+        data_frame.insert(19, column="4", value="")
+        data_frame.insert(20, column="-4", value="")
+
+        data_frame.iloc[1, 11] = "User Input"
+        data_frame.at[0, 'Octant ID'] = "Overall Count"
+        data_frame.at[1, 'Octant ID'] = "Mod " + str(mod)
+    except:
+        print("Error in inserting columns.")
+        exit()
