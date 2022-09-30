@@ -107,6 +107,21 @@ def octact_identification(mod):
         print(e)
         exit()
 
+    try:
+            ### Exporting dataframe to excel
+            df.to_excel('output_octant_longest_subsequence.xlsx', index=False)
+    except:
+            print("Error in exporting to Excel file.")
+            exit()
+from platform import python_version
+ver = python_version()
+
+if ver == "3.8.10":
+    print("Correct Version Installed")
+else:
+    print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+  
+mod = 7000
 #This shall be the last lines of the code.
 end_time = datetime.now()
 print('Duration of Program Execution: {}'.format(end_time - start_time))
