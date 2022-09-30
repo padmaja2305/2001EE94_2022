@@ -153,3 +153,117 @@ def count_ocatant_value(l):
     except:
         print("Error in counting octant values for ranges.")
         exit()
+
+def transistion_count():
+    global data_frame
+    global idx
+    try:
+        # -------------- Overall Transition Count ----------------------
+
+        idx += 3
+        data_frame.at[idx, 'Octant ID'] = "Overall Transition Count"
+        idx += 1
+        data_frame.at[idx, '1'] = 'To'
+        idx += 1
+        data_frame.at[idx, 'Octant ID'] = 'Count'
+        for k in range(-4, 5):
+            if k == 0:
+                continue
+            data_frame.at[idx, str(k)] = k
+        idx += 1
+        data_frame.at[idx, ''] = "From"
+
+        # Creating dataframe to store values
+        data = []
+        data_frame2 = pd.DataFrame(data, index=['1', '-1', '2', '-2', '3', '-3', '4', '-4'],
+                                   columns=['1', '-1', '2', '-2', '3', '-3', '4', '-4'])
+
+        data_frame2 = data_frame2.fillna(0)
+
+        # Calculating values
+        for i in range(0, rows-1):
+            first = str(data_frame.at[i, 'Octant'])
+            second = str(data_frame.at[i+1, 'Octant'])
+            data_frame2.at[first, second] += 1
+
+        # Adding values to main dataframe
+        for k in range(1, 5):
+            data_frame.at[idx, 'Octant ID'] = str(k)
+            for l in range(-4, 5):
+                if l == 0:
+                    continue
+                data_frame.at[idx, str(l)] = data_frame2.at[str(k), str(l)]
+            idx += 1
+            data_frame.at[idx, 'Octant ID'] = str(-1*k)
+            for l in range(-4, 5):
+                if l == 0:
+                    continue
+                data_frame.at[idx, str(l)] = data_frame2.at[str(-1*k), str(l)]
+            idx += 1
+    except:
+        print("Error in calculating Overall Transition Count.")
+        exit()
+
+def mod_transiston(mod):
+    global data_frame
+    global idx
+    step = int(mod)
+    try:
+        # ------------ Mod Transition Count ------------------
+        for i in range(0, rows, step-1):
+            lim = i+step-1
+            if lim >= rows:
+                lim = rows-1
+            idx += 2
+            data_frame.at[idx, 'Octant ID'] = 'Mod Transition Count'
+            idx += 1
+            data_frame.at[idx, 'Octant ID'] = str(i)+'-'+str(lim)
+            data_frame.at[idx, '1'] = 'To'
+            idx += 1
+            data_frame.at[idx, 'Octant ID'] = 'Count'
+            for k in range(-4, 5):
+                if k == 0:
+                    continue
+                data_frame.at[idx, str(k)] = k
+            idx += 1
+            data_frame.at[idx, ''] = "From"
+
+            # Creating dataframe to store values
+            data = []
+            data_frame2 = pd.DataFrame(data, index=['1', '-1', '2', '-2', '3', '-3', '4', '-4'],
+                                       columns=['1', '-1', '2', '-2', '3', '-3', '4', '-4'])
+            data_frame2 = data_frame2.fillna(0)
+
+            # Calculating values
+            for j in range(i, lim):
+                first = str(data_frame.at[j, 'Octant'])
+                second = str(data_frame.at[j+1, 'Octant'])
+                data_frame2.at[first, second] += 1
+
+            # Adding values to main dataframe
+            for k in range(1, 5):
+                data_frame.at[idx, 'Octant ID'] = str(k)
+                for l in range(-4, 5):
+                    if l == 0:
+                        continue
+                    data_frame.at[idx, str(l)] = data_frame2.at[str(k), str(l)]
+                idx += 1
+                data_frame.at[idx, 'Octant ID'] = str(-1*k)
+                for l in range(-4, 5):
+                    if l == 0:
+                        continue
+                    data_frame.at[idx, str(
+                        l)] = data_frame2.at[str(-1*k), str(l)]
+                idx += 1
+    except:
+        print("Error in calculating Mod Transition Count.")
+        exit()
+
+def writing_excel_file(filename):
+    try:
+        # Exporting dataframe to excel
+        data_frame.to_excel(
+            filename, index=False)
+    except:
+        print("Error in exporting to excel.")
+        exit()
