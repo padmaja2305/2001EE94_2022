@@ -9,7 +9,7 @@ data_frame = None
 rows = None
 idx = 0
 
-#reading excel file
+#firstly reading excel file
 def reading_excel_file(filename):
     global data_frame
     global rows
@@ -25,12 +25,12 @@ def average():
     global data_frame
     global rows
     try:
-        # Calculate Average Values
+        # 1. Calculate the Average Values
         u_avg = data_frame['U'].mean()
         v_avg = data_frame['V'].mean()
         w_avg = data_frame['W'].mean()
 
-        # Calculate Average Value of U, V, W
+        # 2. Calculate Average Value of U, V, W
         data_frame.insert(4, column="U Avg", value="")
         data_frame.insert(5, column="V Avg", value="")
         data_frame.insert(6, column="W Avg", value="")
@@ -39,12 +39,12 @@ def average():
         data_frame.at[0, 'V Avg'] = v_avg
         data_frame.at[0, 'W Avg'] = w_avg
 
-        # Calculate U', V', W'
+        # 3. Calculate U', V', W'
         data_frame.insert(7, column="U'=U - U avg", value="")
         data_frame.insert(8, column="V'=V - V avg", value="")
         data_frame.insert(9, column="W'=W - W avg", value="")
 
-        # for i in the range(0,rows):
+        # 4. for i in the range(0,rows):
         data_frame["U'=U - U avg"] = data_frame['U'] - u_avg
         data_frame["V'=V - V avg"] = data_frame['V'] - v_avg
         data_frame["W'=W - W avg"] = data_frame['W'] - w_avg
@@ -54,7 +54,7 @@ def average():
 
 def insert_octant_column():
     try:
-        # Insert new column for the Octant
+        # 5. Insert new column for the Octant
         data_frame.insert(10, column="Octant", value="")
         data_frame.insert(11, column="", value="")
 
@@ -79,7 +79,7 @@ def insert_octant_values():
     global data_frame
     l = []
     try:
-        # Calculating the octant values
+        # 6. Calculating the octant values
         for i in range(0, rows):
             if data_frame.at[i, "U'=U - U avg"] >= 0 and data_frame.at[i, "V'=V - V avg"] >= 0:
                 if data_frame.at[i, "W'=W - W avg"] >= 0:
@@ -120,7 +120,7 @@ def count_ocatant_value(l):
     global data_frame
     global idx
     try:
-        # Split list into ranges and find the count of octant values
+        # 7. Splitting list into ranges and calculating the count of octant values
         start = 0
         end = len(l)
         step = int(mod)
@@ -143,7 +143,7 @@ def count_ocatant_value(l):
             data_frame.at[idx, '-4'] = sub_list.count(-4)
             idx += 1
 
-        # Verified Column
+        # 8. Confirming Verified Column
         data_frame.at[idx, 'Octant ID'] = "Verified"
         for i in range(-4, 5):
             if i == 0:
@@ -158,7 +158,7 @@ def transistion_count():
     global data_frame
     global idx
     try:
-        # -------------- Overall Transition Count ----------------------
+        # Overall Transition Count
 
         idx += 3
         data_frame.at[idx, 'Octant ID'] = "Overall Transition Count"
@@ -173,20 +173,20 @@ def transistion_count():
         idx += 1
         data_frame.at[idx, ''] = "From"
 
-        # Creating dataframe to store values
+        # 9. Creating dataframe to store values
         data = []
         data_frame2 = pd.DataFrame(data, index=['1', '-1', '2', '-2', '3', '-3', '4', '-4'],
                                    columns=['1', '-1', '2', '-2', '3', '-3', '4', '-4'])
 
         data_frame2 = data_frame2.fillna(0)
 
-        # Calculating values
+        # 10. Calculating values
         for i in range(0, rows-1):
             first = str(data_frame.at[i, 'Octant'])
             second = str(data_frame.at[i+1, 'Octant'])
             data_frame2.at[first, second] += 1
 
-        # Adding values to main dataframe
+        # 11. Adding values to main dataframe
         for k in range(1, 5):
             data_frame.at[idx, 'Octant ID'] = str(k)
             for l in range(-4, 5):
@@ -209,7 +209,7 @@ def mod_transiston(mod):
     global idx
     step = int(mod)
     try:
-        # ------------ Mod Transition Count ------------------
+        # Mod Transition Count 
         for i in range(0, rows, step-1):
             lim = i+step-1
             if lim >= rows:
@@ -228,19 +228,19 @@ def mod_transiston(mod):
             idx += 1
             data_frame.at[idx, ''] = "From"
 
-            # Creating dataframe to store values
+            # 12. Creating dataframe to store values
             data = []
             data_frame2 = pd.DataFrame(data, index=['1', '-1', '2', '-2', '3', '-3', '4', '-4'],
                                        columns=['1', '-1', '2', '-2', '3', '-3', '4', '-4'])
             data_frame2 = data_frame2.fillna(0)
 
-            # Calculating values
+            # 13. Calculate the values
             for j in range(i, lim):
                 first = str(data_frame.at[j, 'Octant'])
                 second = str(data_frame.at[j+1, 'Octant'])
                 data_frame2.at[first, second] += 1
 
-            # Adding values to main dataframe
+            # 14. Add values to main dataframe
             for k in range(1, 5):
                 data_frame.at[idx, 'Octant ID'] = str(k)
                 for l in range(-4, 5):
@@ -261,7 +261,7 @@ def mod_transiston(mod):
 
 def writing_excel_file(filename):
     try:
-        # Exporting dataframe to excel
+        # 15. Exporting dataframe to excel
         data_frame.to_excel(
             filename, index=False)
     except:
