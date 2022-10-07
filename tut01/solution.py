@@ -51,8 +51,8 @@ def octact_identification(mod):
     df.insert(19, column="4", value="")
     df.insert(20, column="-4", value="")
 
-    df.iloc[1, 11] = "User Input"
-    df['Octant ID'][0] = "Overall Count"
+    df.iloc[1, 11] = "User Input"  #df.add is better way to access
+    df['Octant ID'][0] = "Overall Count"  #df.at [row, header] is better way to access
     df['Octant ID'][1] = "Mod "+mod 
     l=[]
 
@@ -98,9 +98,9 @@ def octact_identification(mod):
         x = i
         sub_list = l[x:x+step]
         #print(sub_list)
-        y = x+step
-        if x!=0:
-          x+=1
+        y = x+step-1
+        if y >= rows:
+            y = rows-1
         df['Octant ID'][idx] = str(x)+"-"+str(y)
         df['1'][idx] = sub_list.count(1)
         df['-1'][idx] = sub_list.count(-1)
