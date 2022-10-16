@@ -114,3 +114,91 @@ def insert_octant_values():
         print("Error in counting octant values.")
         exit()
 
+def count_ocatant_value(l): 
+    global data_frame
+    global iter
+    try:
+        # Split list into ranges and find the count of octant values
+        start = 0
+        end = len(l)
+        step = int(mod)
+        iter = 2
+        total_rows_mod = math.ceil(rows/step)
+        for i in range(start, end, step):
+            x = i
+            sub_list = l[x:x+step]
+            y = x+step-1
+            if y > rows:
+                y = rows-1
+            data_frame.at[iter, 'Octant ID'] = str(x)+"-"+str(y)
+            data_frame.at[iter, '1'] = sub_list.count(1)
+            data_frame.at[iter, '-1'] = sub_list.count(-1)
+            data_frame.at[iter, '2'] = sub_list.count(2)
+            data_frame.at[iter, '-2'] = sub_list.count(-2)
+            data_frame.at[iter, '3'] = sub_list.count(3)
+            data_frame.at[iter, '-3'] = sub_list.count(-3)
+            data_frame.at[iter, '4'] = sub_list.count(4)
+            data_frame.at[iter, '-4'] = sub_list.count(-4)
+            iter += 1
+
+        # Verified Column
+        data_frame.at[iter, 'Octant ID'] = "Verified"
+        for i in range(-4, 5):
+            if i == 0:
+                continue
+            data_frame.at[iter, str(i)] = data_frame[str(
+                i)].iloc[2:(2+total_rows_mod)].sum()
+    except:
+        print("Error in counting octant values for ranges.")
+        exit()
+
+def transistion_count():
+    global data_frame
+    global iter
+    try:
+        # -------------- Overall Transition Count ----------------------
+
+        iter += 3
+        data_frame.at[iter, 'Octant ID'] = "Overall Transition Count"
+        iter += 1
+        data_frame.at[iter, '1'] = 'To'
+        iter += 1
+        data_frame.at[iter, 'Octant ID'] = 'Count'
+        for k in range(-4, 5):
+            if k == 0:
+                continue
+            data_frame.at[iter, str(k)] = k
+        iter += 1
+        data_frame.at[iter, ''] = "From"
+
+        # Creating dataframe to store values
+        matrix = []
+        data_frame2 = pd.DataFrame(matrix, index=['1', '-1', '2', '-2', '3', '-3', '4', '-4'],
+                                   columns=['1', '-1', '2', '-2', '3', '-3', '4', '-4'])
+
+        data_frame2 = data_frame2.fillna(0)
+
+        # Calculating values
+        for i in range(0, rows-1):
+            first = str(data_frame.at[i, 'Octant'])
+            second = str(data_frame.at[i+1, 'Octant'])
+            data_frame2.at[first, second] += 1
+
+        # Adding values to main dataframe
+        for k in range(1, 5):
+            data_frame.at[iter, 'Octant ID'] = str(k)
+            for l in range(-4, 5):
+                if l == 0:
+                    continue
+                data_frame.at[iter, str(l)] = data_frame2.at[str(k), str(l)]
+            iter += 1
+            data_frame.at[iter, 'Octant ID'] = str(-1*k)
+            for l in range(-4, 5):
+                if l == 0:
+                    continue
+                data_frame.at[iter, str(l)] = data_frame2.at[str(-1*k), str(l)]
+            iter += 1
+    except:
+        print("Error in calculating Overall Transition Count.")
+        exit()
+
