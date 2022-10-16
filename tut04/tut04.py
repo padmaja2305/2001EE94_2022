@@ -257,3 +257,136 @@ def mod_transiston(mod):
         print("Error in calculating Mod Transition Count.")
         exit()
 
+def writing_excel_file(filename):
+    try:
+        # Exporting dataframe to excel
+        data_frame.to_excel(
+            filename, index=False)
+    except:
+        print("Error in exporting to excel.")
+        exit()
+matrix=[]
+def setup():
+
+    temp_df = pd.DataFrame(matrix, index=['1','-1','2','-2','3','-3','4','-4'],
+    columns=['Len', 'Count'])
+    temp_df = temp_df.fillna(0)
+
+    return temp_df
+
+
+
+def octact_identification(mod):
+    global data_frame
+    reading_excel_file("input_octant_longest_subsequence_with_range.xlsx")
+    average()
+    insert_octant_column()
+    l = insert_octant_values()
+    # count_ocatant_value(l)
+    # transistion_count()
+    # mod_transiston(mod)
+    try:
+
+        temp_df = setup()
+        
+        temp_df_1 = pd.DataFrame(matrix, columns=['1','-1','2','-2','3','-3','4','-4'])
+
+        bpr = data_frame.at[0, 'Octant'] 
+        temp_df.at[str(bpr), 'Len'] = 1
+
+        lent = 1
+        beg = data_frame.at[0,'Time']
+        searchf = data_frame.at[0, 'Time']
+        for iter in range(1,rows):
+            pres = data_frame.at[iter, 'Octant']
+            if (pres == bpr):
+                lent+=1
+            else:
+                lent = 1
+                beg = data_frame.at[iter, 'Time']
+            searchf = data_frame.at[iter, 'Time']
+            temp_data_frame2 = temp_df_1.count(axis=0)
+            if (lent == temp_df.at[str(pres), 'Len']):
+                temp_df.at[str(pres), 'Count'] += 1                
+                temp_df_1.at[temp_data_frame2[str(pres)], str(pres)] = beg
+                temp_df_1.at[temp_data_frame2[str(pres)]+1, str(pres)] = searchf
+            elif(lent > temp_df.at[str(pres), 'Len']):
+                temp_df.at[str(pres), 'Count'] = 1
+                del temp_df_1[str(pres)]
+                temp_df_1.insert(7, column = str(pres), value="")
+                temp_df_1.at[0, str(pres)] = beg
+                temp_df_1.at[1, str(pres)] = searchf
+            temp_df_1.replace('', np.nan, inplace=True)
+            temp_df.at[str(pres), 'Len'] = max(lent, temp_df.at[str(pres), 'Len'])
+            bpr = pres
+
+        iter = 0
+        for i in range(1,5):
+            data_frame.at[iter, 'Octant ID'] = str(i)
+            data_frame.at[iter, 'Longest Subsequence Length'] = temp_df.at[str(i), 'Len']
+            
+            data_frame.at[iter, 'Count'] = temp_df.at[str(i), 'Count']
+            iter+=1
+            data_frame.at[iter, 'Octant ID'] = str(-1*i)
+            data_frame.at[iter, 'Longest Subsequence Length'] = temp_df.at[str(-1*i), 'Len']
+            
+            data_frame.at[iter, 'Count'] = temp_df.at[str(-1*i), 'Count']
+            iter+=1
+
+        iter=0
+        for i in range(1,5):
+            
+
+            data_frame.at[iter, 'Octant ID new'] = str(i)
+            data_frame.at[iter, 'Longest Subsequence Length new'] = temp_df.at[str(i), 'Len']
+            
+            data_frame.at[iter, 'Count new'] = temp_df.at[str(i), 'Count']
+            iter+=1
+            data_frame.at[iter, 'Octant ID new'] = "Time"
+            data_frame.at[iter, 'Longest Subsequence Length new'] = "From"
+            
+            data_frame.at[iter, 'Count new'] = "To"
+            iter+=1
+            for index in range(0, len(temp_df_1[str(i)]), 2):
+                if np.isnan(temp_df_1.at[index, str(i)]):
+                    break
+                data_frame.at[iter, 'Longest Subsequence Length new'] = temp_df_1.at[index, str(i)]
+                data_frame.at[iter, 'Count new'] = temp_df_1.at[index+1, str(i)]
+                iter+=1
+
+            data_frame.at[iter, 'Octant ID new'] = str(-1*i)
+            data_frame.at[iter, 'Longest Subsequence Length new'] = temp_df.at[str(-1*i), 'Len']
+            
+            data_frame.at[iter, 'Count new'] = temp_df.at[str(-1*i), 'Count']
+            iter+=1
+            data_frame.at[iter, 'Octant ID new'] = "Time"
+            data_frame.at[iter, 'Longest Subsequence Length new'] = "From"
+            
+            data_frame.at[iter, 'Count new'] = "To"
+            iter+=1
+            
+            for index in range(0, len(temp_df_1[str(-1*i)]), 2):
+                if np.isnan(temp_df_1.at[index, str(-1*i)]):
+                    break
+                data_frame.at[iter, 'Longest Subsequence Length new'] = temp_df_1.at[index, str(-1*i)]
+                data_frame.at[iter, 'Count new'] = temp_df_1.at[index+1, str(-1*i)]
+                iter+=1     
+
+    except Exception as e:
+        print(e)
+        exit()
+
+    
+    writing_excel_file("output_octant_longest_subsequence_with_range.xlsx")
+
+
+if __name__ == "__main__":
+    ver = python_version()
+
+    if ver == "3.8.10":
+        print("Correct Version Installed")
+    else:
+        print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+
+    mod = 10000
+    octact_identification(mod)
