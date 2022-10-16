@@ -1,29 +1,21 @@
-
-from datetime import datetime
-start_time = datetime.now()
-
-#Help https://youtu.be/H37f_x4wAC0
-def octant_longest_subsequence_count_with_range():
-###Code
-
+from glob import glob
 from platform import python_version
-ver = python_version()
+import pandas as pd
+import numpy as np
+import math
 
-if ver == "3.8.10":
-    print("Correct Version Installed")
-else:
-    print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+data_frame = None
+rows = None
+iter = 0
 
+def reading_excel_file(filename):
+    global data_frame
+    global rows
+    try:
+        data_frame = pd.read_excel("input_octant_longest_subsequence_with_range.xlsx")
+        rows = data_frame.shape[0]
+    except Exception as e:
+        print(e)
+        print("Error: file not found")
+        exit(1)
 
-octant_longest_subsequence_count_with_range()
-
-
-
-
-
-
-
-
-#This shall be the last lines of the code.
-end_time = datetime.now()
-print('Duration of Program Execution: {}'.format(end_time - start_time))
