@@ -73,3 +73,44 @@ def insert_octant_column():
         print("Error in inserting columns.")
         exit()
 
+def insert_octant_values():
+    global data_frame
+    l = []
+    try:
+        # Calculating the octant values
+        for i in range(0, rows):
+            if data_frame.at[i, "U'=U - U avg"] >= 0 and data_frame.at[i, "V'=V - V avg"] >= 0:
+                if data_frame.at[i, "W'=W - W avg"] >= 0:
+                    data_frame.at[i, 'Octant'] = 1
+                else:
+                    data_frame.at[i, 'Octant'] = -1
+            elif data_frame.at[i, "U'=U - U avg"] < 0 and data_frame.at[i, "V'=V - V avg"] >= 0:
+                if data_frame.at[i, "W'=W - W avg"] >= 0:
+                    data_frame.at[i, 'Octant'] = 2
+                else:
+                    data_frame.at[i, 'Octant'] = -2
+            elif data_frame.at[i, "U'=U - U avg"] < 0 and data_frame.at[i, "V'=V - V avg"] < 0:
+                if data_frame.at[i, "W'=W - W avg"] >= 0:
+                    data_frame.at[i, 'Octant'] = 3
+                else:
+                    data_frame.at[i, 'Octant'] = -3
+            elif data_frame.at[i, "U'=U - U avg"] >= 0 and data_frame.at[i, "V'=V - V avg"] < 0:
+                if data_frame.at[i, "W'=W - W avg"] >= 0:
+                    data_frame.at[i, 'Octant'] = 4
+                else:
+                    data_frame.at[i, 'Octant'] = -4
+            l.append(data_frame.at[i, 'Octant'])
+
+        # data_frame.at[0, "1"] = l.count(1)
+        # data_frame.at[0, "-1"] = l.count(-1)
+        # data_frame.at[0, "2"] = l.count(2)
+        # data_frame.at[0, "-2"] = l.count(-2)
+        # data_frame.at[0, "3"] = l.count(3)
+        # data_frame.at[0, "-3"] = l.count(-3)
+        # data_frame.at[0, "4"] = l.count(4)
+        # data_frame.at[0, "-4"] = l.count(-4)
+        return l
+    except:
+        print("Error in counting octant values.")
+        exit()
+
