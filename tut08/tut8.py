@@ -272,3 +272,137 @@ def Fallofwickets(lst, runs):
             Str = str(Runs) + "-" + str(wic) + "( " + i["Batsman"] + ", " + i["Over"] +")" 
             lst_1.append(Str)
     return lst_1
+#-----------------------lst of players who did not bat from each group-----------------
+def Did_not_bat(lst1,lst2):
+    lst3 = []
+    for i in lst1:
+        if i not in lst2:
+            lst3.append(i)
+    return lst3
+#------------------------Runs scored in powerplay---------------------------------------
+def powerplay(lst1):
+    power = 0
+    for i in lst1:
+        if i["Over"] == "6.1":
+            break
+        else:
+            power+=runs_counter(i["Run"])
+    return power
+#----------------------group scorecard for each groups ------------------------------------
+def group_scorecard(index,Batting_Frame1,Bowling_Frame2,Did_not,Fall,powerRun):
+    scorecard = pd.DataFrame()
+    for i in range(8):
+        scorecard.insert(i, column = str(i),value="")
+    shape_0 = scorecard.shape
+    shape_1 = Batting_Frame1.shape
+    shape_3 = Bowling_Frame2.shape
+    c = 0
+    for i in Batting_Frame1.columns:
+        scorecard.at[index,str(c)] = i
+        c+=1
+    index+=1
+    for i in range(shape_1[0]):
+        for j in range(shape_1[1]):
+            scorecard.at[index,str(j)] = Batting_Frame1.iloc[i,j]
+        index+=1
+    if len(Did_not)!=0: 
+        scorecard.at[index,"0"] = "Did not Bat"
+        for i in range(len(Did_not)):
+            scorecard.at[index,str(i+1)] = Did_not[i]
+        index+=1
+    for i in range(8):
+        scorecard.at[index,str(i)] = " "
+    index+=1
+    scorecard.at[index,"0"] = "Fall Of Wickets"
+    index+=1
+    count = 0
+    col = 0
+    pak_wic = Fall
+    while count!=len(pak_wic):
+        if col == shape_0[1]:
+            index +=1
+            col = 0
+        scorecard.at[index,str(col)] = pak_wic[count]
+        col+=1
+        count+=1
+    index+=1
+    for i in range(8):
+        scorecard.at[index,str(i)] = " "
+    index+=1
+    new_cols = ["Bowler","O","M","R","W","NB","WD","ECO"]
+    for i in range(len(new_cols)):
+        scorecard.at[index,str(i)] = new_cols[i]
+    index+=1
+    for i in range(shape_3[0]):
+        for j in range(shape_3[1]):
+            scorecard.at[index,str(j)] = Bowling_Frame2.iloc[i,j]
+        index+=1
+    for i in range(8):
+        scorecard.at[index,str(i)] = " "
+    index+=1
+    scorecard.at[index,"0"] = "Powerplays"
+    scorecard.at[index,"2"] = "Overs"
+    scorecard.at[index,"7"] = "Runs"
+    index+=1
+    scorecard.at[index,"0"] = "Mandatory"
+    scorecard.at[index,"2"] = "0.1-6"
+    scorecard.at[index,"7"] = powerRun
+    index+=1
+    for i in range(8):
+        scorecard.at[index,str(i)] = " "
+    index+=1
+    return scorecard,index
+
+def main(file1, file2, file3):
+    runs, Lines_1, Lines_2, Lines_3 = file_read(file1, file2, file3)
+
+    try:
+        #Obtaining lines from the text file
+        lines_1,lines_2,lines_3 = commentary_lines(Lines_1),commentary_lines(Lines_2),commentary_lines(Lines_3)
+
+        #Obtaining Players of both the groups
+        Indian_players = group_div("India",lines_1)
+        Pakistan_players = group_div("Pakistan",lines_1)
+
+        #Generating Raw Data for both the groups
+        India_Data, Pakistan_Data = group_data(lines_2,Indian_players,Pakistan_players), group_data(lines_3,Pakistan_players,Indian_players)
+
+        #Batting/Bowling order of both the groups   
+        Pakistan_Batting = Bat_Bowl_order(Pakistan_Data)
+        India_Batting = Bat_Bowl_order(India_Data)
+
+        #Batting dataset for each group
+        India_Batting_set = Batting_Data_Set(India_Batting[0],India_Data,India_Batting[0], runs)
+        Pakistan_Batting_set = Batting_Data_Set(Pakistan_Batting[0],Pakistan_Data,Pakistan_Batting[0], runs)
+
+        #Bowling set for each group
+        India_Bowling_set = Bowling_Data_Set(Pakistan_Batting[1],Pakistan_Data,Pakistan_Batting[1], runs)
+        Pakistan_Bowling_set = Bowling_Data_Set(India_Batting[1],India_Data,India_Batting[1], runs)
+
+        #Players who did not bat from each group
+        Pakistan_did_not_bat = Did_not_bat(Pakistan_players,Pakistan_Batting[0])
+        India_did_not_bat = Did_not_bat(Indian_players,India_Batting[0])
+
+        #Fall of wickets of each group
+        India_fall_of_wickets = Fallofwickets(India_Data, runs)
+        Pakistan_fall_of_wickets = Fallofwickets(Pakistan_Data, runs)
+
+        # Powerplay run scored by each group 
+        India_Power_play = powerplay(India_Data)
+        Pakistan_Power_play = powerplay(Pakistan_Data)
+
+        # group scorecard of each group
+        Pakistan_score,Index1 = group_scorecard(0,Pakistan_Batting_set,India_Bowling_set,Pakistan_did_not_bat,Pakistan_fall_of_wickets,Pakistan_Power_play)
+        India_score,Index2 = group_scorecard(Index1+1,India_Batting_set,Pakistan_Bowling_set,India_did_not_bat,India_fall_of_wickets,India_Power_play)
+    except:
+        print("Error")
+        exit()
+
+    try:
+    #--------------------------------- Concatenating scorecard dataframes of each group into final scorecard-------------------------
+        Frames = [Pakistan_score,India_score]
+        Scorecard = pd.concat(Frames)
+    except:
+        print("Error in concatenating two dataframes")
+        exit()
+    try:
