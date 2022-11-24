@@ -71,3 +71,41 @@ def commentary_lines(Lines):
         if Lines[i] !="\n":
             lines.append(Lines[i])
     return lines
+#------- Reading and converting the data from text file to dictionary --------------
+def group_data(lines,Batting_group,Bowling_group):
+    Data = []
+    for line in lines:
+        Dict = {}
+        Dict_1 = {}
+        line = line.split(', ')
+        Dict["Batsman"] = Full_nm(line[0].split('to ')[1], Batting_group)
+        Dict["Bowler"] = Full_nm(nm(line[0].split(' to')[0]),Bowling_group)
+        Dict["Over"] = Over(line[0].split(' to')[0])
+        if "leg byes" in line[1] or "no ball" in line[1] or "byes" in line[1]:
+            Dict["Run"] = line[1] + "-" + line[2]
+        else:
+            if "out" in line[1]:
+                x = line[1].split("!!")[0]
+                if "Caught" in x:
+                    y = x.split("Caught by")
+                    Dict["Run"] = y[0] +"c" + y[1]
+                else:
+                    Dict["Run"] = x
+            else:
+                Dict["Run"] = line[1]
+        Data.append(Dict)
+    return Data
+
+
+def Bat_Bowl_order(lst):
+    lst_1 = []
+    lst2 = []
+    lst1 = []
+    for i in lst:
+        if i["Batsman"] not in lst1:
+            lst1.append(i["Batsman"])
+        if i["Bowler"] not in lst2:
+            lst2.append(i["Bowler"])
+    lst_1.append(lst1)
+    lst_1.append(lst2)
+    return lst_1
