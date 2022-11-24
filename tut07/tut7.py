@@ -232,6 +232,142 @@ def calculate_octant(df, rows):
         print("Error in calculating rank.", e)
     return df
 
+def octant_transition_count(mod, df):
+    try:
+        # Reading Excel File
+        rows = df.shape[0]
+        step = mod
+        cols = df.shape[1]
+        df.insrt(cols, column="                     ", value="")
+        cols+=1
+    except:
+        print("Error in reading Excel file!")
+        exit()
+    
+    try:
+        # Overall Transition Count 
+        for l in range(2,12):
+            blank = ""
+            for i in range(1,l+1):
+                blank+=" "
+            df.insrt(cols, column=blank, value="")
+            cols+=1
+        blank_dict={}
+        bl_len = 4        
+        for i in range(1,5):
+            blank=""
+            for idx in range(0, bl_len):
+                blank += " "
+            blank_dict[str(i)] = blank
+            bl_len+=1
+            blank=""
+            for idx in range(0, bl_len):
+                blank += " "
+            blank_dict[str(-1*i)] = blank
+            bl_len+=1
+        blank_dict['f'] = '  '
+        blank_dict['s'] = '   '
+        
+        idx=0
+        df.at[idx, blank_dict['1']] = 'To'
+        idx+=1
+        df.at[idx, blank_dict['s']] = 'Count'
+        for k in range(-4,5):
+            if k==0:
+                continue
+            df.at[idx, blank_dict[str(k)]] =  k
+        idx+=1
+        df.at[idx, blank_dict['f']] = "From"
+
+        # Creating dataframe df1 to store values
+        data=[]
+        df1 = pd.DataFrame(data, index=['1','-1','2','-2','3','-3','4','-4'],
+                        columns=['1','-1','2','-2','3','-3','4','-4'])
+
+        df1 = df1.fillna(0)  # For filling 0 to df1
+
+        # Calculating values
+        for i in range(0,rows-1):
+            first = str(df.at[i,'Octant'])
+            second = str(df.at[i+1, 'Octant'])
+            df1.at[first, second] += 1
+
+        # Adding values to main dataframe
+        for k in range (1,5):
+            df.at[idx, blank_dict['s']] = str(k)
+            for l in range (-4,5):
+                if l==0:
+                    continue
+                df.at[idx, blank_dict[str(l)]] = df1.at[str(k), str(l)]
+            idx+=1
+            df.at[idx, blank_dict['s']] = str(-1*k)
+            for l in range (-4,5):
+                if l==0:
+                    continue
+                df.at[idx, blank_dict[str(l)]] = df1.at[str(-1*k), str(l)]
+            idx+=1
+    except Exception as e:
+        print("Error in calculating Overall Transition Count!", e)
+        exit()
+
+    try:
+        # Mod Transition Count
+        for i in range(0, rows, step):
+            lim = i+step
+            if lim>=rows:
+                lim = rows
+            idx+=2
+            df.at[idx, blank_dict['s']] = 'Mod Transition Count'
+            idx+=1
+            df.at[idx, blank_dict['s']] = str(i)+'-'+str(lim-1)
+            df.at[idx, blank_dict['1']] = 'To'
+            idx+=1
+            df.at[idx, blank_dict['s']] = 'Octant #'
+            for k in range(-4,5):
+                if k==0:
+                    continue
+                df.at[idx, blank_dict[str(k)]] =  k
+            idx+=1
+            df.at[idx, blank_dict['f']] = "From"
+
+            data=[]
+            df1 = pd.DataFrame(data, index=['1','-1','2','-2','3','-3','4','-4'],
+                            columns=['1','-1','2','-2','3','-3','4','-4'])
+            df1 = df1.fillna(0)
+
+            # Calculating values
+            if lim==rows:
+                lim-=1
+            for j in range(i,lim):
+                first = str(df.at[j,'Octant'])
+                second = str(df.at[j+1, 'Octant'])
+                df1.at[first, second] += 1
+
+           # Adding values to the main dataframe
+            for k in range (1,5):
+                df.at[idx, blank_dict['s']] = str(k)
+                for l in range (-4,5):
+                    if l==0:
+                        continue
+                    df.at[idx, blank_dict[str(l)]] = df1.at[str(k), str(l)]
+                idx+=1
+                df.at[idx, blank_dict['s']] = str(-1*k)
+                for l in range (-4,5):
+                    if l==0:
+                        continue
+                    df.at[idx, blank_dict[str(l)]] = df1.at[str(-1*k), str(l)]
+                idx+=1
+    except:
+        print("Error in calculating Mod Transition Count!")
+        exit()
+    
+    try:
+        # Exporting dataframe to excel
+        return df
+    except Exception as e:    
+        print("Error in exporting to excel.", e)
+        exit()
+
 
 
 
