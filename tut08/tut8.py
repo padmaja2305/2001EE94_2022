@@ -406,3 +406,18 @@ def main(file1, file2, file3):
         print("Error in concatenating two dataframes")
         exit()
     try:
+    #----------------------------------- Final scorecard csv file -------------------------------- 
+        Scorecard.to_csv("Scorecard.csv",index = False, header = False)
+    except:
+        print("Error in giving the output file")
+        exit()
+
+if __name__ == "__main__":
+    if ver == "3.8.10":
+        print("Correct Version Installed")
+    else:
+        print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+    main('groups.txt', 'india_inns.txt', 'pak_inns1.txt')
+
+    end_time = datetime.now()
+    print('Duration of Program Execution: {}'.format(end_time - start_time))
