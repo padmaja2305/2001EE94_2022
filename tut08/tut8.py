@@ -50,3 +50,24 @@ def over_num(x):
     else:
         over = str(x//6) + "." +str(x%6)
     return over
+
+def group_div(group_nm,lst):
+    for i in range(2):
+        if group_nm in lst[i].split(":")[0]:
+            break
+    x = lst[i].split(": ")
+    players  = x[1]
+    players = players.split(", ")
+    last_player = ""
+    for i in players[-1]:
+        if i != "\n":
+            last_player+=i
+    players[-1] = last_player
+    return players
+
+def commentary_lines(Lines):
+    lines = []
+    for i in range(len(Lines)):
+        if Lines[i] !="\n":
+            lines.append(Lines[i])
+    return lines
