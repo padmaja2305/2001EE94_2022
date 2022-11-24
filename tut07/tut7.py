@@ -480,7 +480,148 @@ def octant_longest_subsequence_count_with_range(mod, df, filename):
         print("Error in exporting to Excel file!", e)
         exit()
 
+def main():
+    filename = ""
+    df, rows = rdfile(f'input/{filename}')
+    df = avarage(df)
+    df = insrt_octant(df)
+    df = calculate_octant(df, rows)
+    df = octant_transition_count(mod, df)
+    df = octant_longest_subsequence_count_with_range(mod, df, filename)
+    path='input/'+filename  
+    outPath='output/'+str(filename[0:len(filename)-5])+'_vel_octant_analysis_mod_'+str(mod)+'.xlsx'        
+    worksheet = xl.load_workbook(path)
+    sheet = worksheet.active
+    fill_pattern = PatternFill(patternType="solid",fgColor="FFFF33")
+    sheet['L1'].value=""
+    sheet['AG1'].value=""
+    sheet['AH1'].value=""
+    sheet['AR1'].value=""
+    tot_r = df.shape[0]
+    tot_c = df.shape[1]
+    total_rows = math.ceil(tot_r/mod)
+    r=0
+    for row in sheet.iter_rows(min_row=3, min_col=1, max_row=tot_r+2, max_col=tot_c):
+        c=0
+        for cell in row: 
+            cell.value = df.iat[r, c]
+            c+=1
+        r+=1
+    for row in sheet.iter_rows(min_row=3, min_col=14, max_row=total_rows+4, max_col=32):
+        for cell in row: 
+            # print(cell.value, end=" ")
+            if(cell.value==1):
+                cell.fill = fill_pattern
 
+    # Defining border formats 
+
+    thin_border = Border(left=Side(border_style='thin',color='00000000'),
+                    right=Side(border_style='thin',color='00000000'),
+                    top=Side(border_style='thin',color='00000000'),
+                    bottom=Side(border_style='thin',color='00000000')
+                    )
+    thick_border = Border(left=Side(border_style='thick',color='00000000'),
+                right=Side(border_style='thick',color='00000000'),
+                top=Side(border_style='thick',color='00000000'),
+                bottom=Side(border_style='thick',color='00000000')
+                )
+                    
+
+    # Defining size of the table 
+    col_num=19
+    # Location of table 
+    row_loc=2
+    col_loc=14
+
+    for i in range (row_loc,row_loc+total_rows+2):
+        for j in range (col_loc,col_loc+col_num):
+            sheet.cell(row=i, column=j).border=thick_border
+
+    for i in range (total_rows+8,total_rows+17):
+        for j in range (29,32):
+            sheet.cell(row=i, column=j).border=thick_border
+    
+    x=4
+    for n in range(total_rows+1):
+        i=0
+        for row in sheet.iter_rows(min_row=x, min_col=35, max_row=x+8, max_col=43):
+            for cell in row:
+                if(cell.value!=None):
+                    cell.border = thick_border
+        x+=13
+
+    for row in sheet.iter_rows(min_row=2, min_col=45, max_row=10, max_col=47):
+        for cell in row:
+            cell.border = thick_border
+
+    max_rows = 1
+    for ro in range(2, tot_r):
+        if str(sheet.cell(row = ro, column = 50).value) == "nan":
+            max_rows = ro
+            break
+    
+    for row in sheet.iter_rows(min_row=2, min_col=49, max_row=max_rows-1, max_col=51):
+        for cell in row:
+            cell.border = thick_border
+    
+    sheet['A1']=''
+    sheet['B1']=''
+    sheet['C1']=''
+    sheet['D1']=''
+    sheet['A2']='T'
+    sheet['B2']='U'
+    sheet['C2']='V'
+    sheet['D2']='W'
+    sheet['E2']='U Avg'
+    sheet['F2']='V Avg'
+    sheet['G2']='W Avg'
+    sheet['H2']="U'=U - U avg"
+    sheet['I2']="V'=V - V avg"
+    sheet['J2']="W'=W - W avg"
+    sheet['K2']='Octant'
+    sheet['N1']='Overall Octant Count'
+    sheet['N2']='Octant ID'
+    sheet['O2']='+1'
+    sheet['P2']='-1'
+    sheet['Q2']='+2'
+    sheet['R2']='-2'
+    sheet['S2']='+3'
+    sheet['T2']='-3'
+    sheet['U2']='+4'
+    sheet['V2']='-4'
+    sheet['W2']='Rank Octant 1'
+    sheet['X2']='Rank Octant -1'
+    sheet['Y2']='Rank Octant 2'
+    sheet['Z2']='Rank Octant -2'
+    sheet['AA2']='Rank Octant 3'
+    sheet['AB2']='Rank Octant -3'
+    sheet['AC2']='Rank Octant 4'
+    sheet['AD2']='Rank Octant -4'
+    sheet['AE2']='Rank1 Octant ID'
+    sheet['AF2']='Rank1 Octant Name'
+    sheet['AI1']='Overall Transition Count'
+    sheet['AS1']='Longest Subsquence Length'
+    sheet['AS2']='Octant ##'
+    sheet['AT2']='Longest Subsquence Length'
+    sheet['AU2']='Count'
+    sheet['AW1']='Longest Subsquence Length with Range'
+    sheet['AW2']='Octant ###'
+    sheet['AX2']='Longest Subsquence Length'
+    sheet['AY2']='Count'
+    
+    # Saving current worksheet in output file
+    worksheet.save(outPath)
+
+
+if __name__ == '__main__':
+    if ver == "3.8.10":
+        print("Correct Version Installed")
+    else:
+        print("Please install 3.8.10. Instruction are present in the GitHub Repo/Webmail. Url: https://pastebin.com/nvibxmjw")
+    mod = 500
+    main(mod)
+    end_time = datetime.now()
+    print('Duration of Program Execution: {}'.format(end_time - start_time))
 
 
 
